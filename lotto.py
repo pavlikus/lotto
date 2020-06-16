@@ -42,13 +42,19 @@ def print_card(card):
     print("-" * 30)
 
 
-if __name__ == '__main__':
-    game = Game()
-    add_players(game)
+def player_choice(name):
+    choice = input(f"{name} cross out the number? (y/n) ")
+    if choice.lower() in ('y', 'yes'):
+        choice = True
+    else:
+        choice = False
+    print(f"Your choice {choice}")
+    return choice
 
-    if not game.players:
-        game.add_player(Bot())
-        game.add_player(Human())
+
+def game_process(game):
+    winner = None
+    choice = False
 
     while game.nrg.numbers:
         # import pdb
@@ -56,14 +62,8 @@ if __name__ == '__main__':
         print(game.nrg.number)
         print(game.nrg.numbers)
         for player in game.players.copy():
-            choice = False
-            if repr(player) == 'human':
-                choice = input(f"{player} cross out the number? (y/n) ")
-                if choice.lower() in ('y', 'yes'):
-                    choice = True
-                else:
-                    choice = False
-            print(f"Your choice {choice}")
+            if isinstance(player, Human):
+                choice = player_choice(player.name)
             game.one_cycle(player, choice=choice)
             print(f"{player.name:*^30}")
             card = card_formater(player)
@@ -72,7 +72,23 @@ if __name__ == '__main__':
         game.nrg.number = game.nrg.numbers.pop()
 
         if game.winner:
-            print(f"{game.winner} you win")
+            winner = game.winner
+            print(f"{winner} you win")
             break
     else:
-        print(f"{game.players[0]} you win")
+        winner = game.players[0]
+        print(f"{winner} you win")
+
+
+if __name__ == '__main__':
+    game = Game()
+    add_players(game)
+
+    if not game.players:
+        game.add_player(Bot())
+        game.add_player(Human())
+
+    game.players[1].card = game.nrg.numbers[74:] + [0] * 12
+    game.players[1].card_game = game.players[1].card.copy()
+
+    game_process(game)

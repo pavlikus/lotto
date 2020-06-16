@@ -68,7 +68,7 @@ class Human(Player):
 
     def update_card(self, choice: bool = False) -> None:
         number_on_card = self.nrg.number in self.card_game
-        if not choice and number_on_card or choice and not number_on_card:
+        if choice != number_on_card:
             raise GameOver(f"{self.name} your Game is Over")
         if number_on_card:
             self.card_game = [0 if n == self.nrg.number else n
@@ -99,14 +99,15 @@ class Game(NRG):
     def add_player(self, player: Player) -> None:
         self.players.append(player)
 
-    def _check_winer(self, player):
+    def _check_winer(self, player: Player) -> None:
+        print(player.card_game)
         if not sum(player.card_game):
             self.winner = player
 
         if len(self.players) == 1:
             self.winner = self.players[0]
 
-    def one_cycle(self, player: Player, *args, **kwargs):
+    def one_cycle(self, player: Player, *args, **kwargs) -> None:
         try:
             player.update_card(*args, **kwargs)
             self._check_winer(player)

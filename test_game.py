@@ -1,5 +1,9 @@
 from game import Bot, Game, Human, NRG, Player
 
+from lotto import game_process
+
+import mock
+
 import pytest
 
 
@@ -72,3 +76,14 @@ class TestNRG:
 
     def test_number_exist(self):
         assert isinstance(NRG.nrg.number, int)
+
+
+class TestLottoGame:
+
+    def test_human_winner(self, game):
+        player = game.players[1]
+        player.card = game.nrg.numbers[74:] + [game.nrg.number] + [0] * 11
+        player.card_game = player.card.copy()
+        with mock.patch('builtins.input', return_value="y"):
+            game_process(game)
+        assert player == game.winner
