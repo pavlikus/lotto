@@ -108,7 +108,12 @@ class TestLottoGame:
         pytest.param(Game(),
                      ("First bot", "Second BOT", "Noname bOT"),
                      (Bot('First'), Bot('Second'), Bot('Noname')),
-                     id="add bot with different type")
+                     id="add bot with different name"),
+        pytest.param(Game(),
+                     ("Alex", "Pavlik human", "nam h", "Alex bot b b", "1 2 "),
+                     (Human('Pavlik'), Bot('Alex')),
+                     id="add only 2 players")
+
     ])
     def test_add_players(self, game, players, game_players):
         side_effect = []
