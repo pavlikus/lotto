@@ -112,7 +112,7 @@ class TestLottoGame:
         pytest.param(Game(),
                      ("Alex", "Pavlik human", "nam h", "Alex bot b b", "1 2 "),
                      (Human('Pavlik'), Bot('Alex')),
-                     id="add only 2 players")
+                     id="only 2 players added")
 
     ])
     def test_add_players(self, game, players, game_players):
