@@ -1,6 +1,6 @@
 from game import Bot, Game, Human, NRG, Player
 
-from lotto import game_process
+from lotto import add_players, game_process
 
 import mock
 
@@ -10,7 +10,7 @@ import pytest
 players = [Bot('Botik'), Human('Pavlik'), Bot('Bot'), Bot()]
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture()
 def game():
     game = Game()
 
@@ -92,11 +92,37 @@ class TestLottoGame:
         player = game.players[0]
         player.card = [0] * 27
         player.card_game = player.card.copy()
-        with mock.patch('builtins.input', return_value="y"):
-            game_process(game)
+        game_process(game)
         assert player == game.winner
 
     def test_one_player_winner(self, game):
         game.players = [Bot()]
         game_process(game)
         assert isinstance(game.winner, Bot)
+
+    @pytest.mark.parametrize("game, players, game_players", [
+        pytest.param(Game(),
+                     ("Alex bot", "Pavlik human", "Botik bot"),
+                     (Bot('Alex'), Human('Pavlik'), Bot('Botik')),
+                     id="add bot - human - bot"),
+        pytest.param(Game(),
+                     ("First bot", "Second BOT", "Noname bOT"),
+                     (Bot('First'), Bot('Second'), Bot('Noname')),
+                     id="add bot with different type")
+    ])
+    def test_add_players(self, game, players, game_players):
+        side_effect = []
+        for player in players:
+            side_effect.append('y')
+            side_effect.append(player)
+        else:
+            side_effect.append('n')
+
+        with mock.patch('builtins.input', side_effect=side_effect):
+            add_players(game)
+
+        assert len(game_players) == len(game.players)
+
+        for player, game_player in zip(game_players, game.players):
+            assert isinstance(player, game_player.__class__)
+            assert str(player) == str(game_player)

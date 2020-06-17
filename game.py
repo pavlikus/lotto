@@ -100,10 +100,10 @@ class Game(NRG):
         self.players.append(player)
 
     def _check_winer(self, player: Player) -> None:
-        print(player.card_game)
         if not sum(player.card_game):
             self.winner = player
 
+    def _check_one_winner(self) -> None:
         if len(self.players) == 1:
             self.winner = self.players[0]
 
@@ -114,3 +114,5 @@ class Game(NRG):
         except GameOver as e:
             print(e)
             self.players.remove(player)
+        finally:
+            self._check_one_winner()

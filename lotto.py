@@ -11,11 +11,14 @@ def add_players(game: Game) -> None:
     choice = input("Add player? (y/n) ")
     while choice.lower() in ('y', 'yes'):
         i = input("Possible type(human, bot), example: Alex bot: ")
-        name, player, *_ = i.split()
-        if player.lower() in players:
-            game.add_player(players[player](name))
-            print(f"Added {name} in game")
-        choice = input("Add more player? (y/n) ")
+        data = i.split()
+        if len(data) > 1:
+            name, player, *_ = data
+            player = player.lower()
+            if player in players:
+                game.add_player(players[player](name))
+                print(f"Added {name} in game")
+            choice = input("Add more player? (y/n) ")
 
 
 def card_formater(player: Player) -> List[str]:
@@ -47,7 +50,6 @@ def player_choice(name: str) -> bool:
         choice = True
     else:
         choice = False
-    print(f"Your choice {choice}")
     return choice
 
 
@@ -55,20 +57,22 @@ def game_process(game: Game):
     winner = None
     choice = False
 
-    while game.nrg.numbers:
+    while not winner and game.nrg.numbers:
         for player in game.players.copy():
-            if isinstance(player, Human):
-                choice = player_choice(player.name)
-            game.one_cycle(player, choice=choice)
-            print(f"{player.name:*^30}")
-            card = card_formater(player)
-            print_card(card)
+            if not game.winner:
+                if isinstance(player, Human):
+                    choice = player_choice(player.name)
+                game.one_cycle(player, choice=choice)
+                print(f"{player.name:*^30}")
+                card = card_formater(player)
+                print_card(card)
+            else:
+                winner = game.winner
+                break
+
         print(f"Number was - {game.nrg.number}")
         game.nrg.number = game.nrg.numbers.pop()
 
-        if game.winner:
-            winner = game.winner
-            break
     else:
         winner = game.players[0]
     print(f"{winner} you win")
