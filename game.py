@@ -16,7 +16,6 @@ class Singleton(type):
 class NumbersRandomGenerator(metaclass=Singleton):
 
     def __init__(self):
-        # init list random numbers between 1 and 90
         self.numbers = random.sample(range(1, 90+1), k=90)
         self.number = self.numbers.pop()
 
@@ -87,7 +86,7 @@ class Bot(Player):
 
 
 class GameOver(Exception):
-    ...
+    """Player need finish game"""
 
 
 class Game(NRG):
@@ -111,8 +110,7 @@ class Game(NRG):
         try:
             player.update_card(*args, **kwargs)
             self._check_winer(player)
-        except GameOver as e:
-            print(e)
+        except GameOver:
             self.players.remove(player)
         finally:
             self._check_one_winner()
