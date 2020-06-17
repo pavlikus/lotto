@@ -2,10 +2,10 @@
 
 from typing import List
 
-from game import Bot, Game, Human
+from game import Bot, Game, Human, Player
 
 
-def add_players(game):
+def add_players(game: Game) -> None:
     players = {'bot': Bot,
                'human': Human}
     choice = input("Add player? (y/n) ")
@@ -18,9 +18,8 @@ def add_players(game):
         choice = input("Add more player? (y/n) ")
 
 
-def card_formater(player) -> List[str]:
+def card_formater(player: Player) -> List[str]:
     diff = list(set(player.card) - set(player.card_game))
-    print(diff)
     card = []
     for i in player.card:
         if not i:
@@ -32,7 +31,7 @@ def card_formater(player) -> List[str]:
     return card
 
 
-def print_card(card):
+def print_card(card: List[str]) -> None:
     print("-" * 30)
     j = 0
     for i in range(9, 28, 9):
@@ -42,7 +41,7 @@ def print_card(card):
     print("-" * 30)
 
 
-def player_choice(name):
+def player_choice(name: str) -> bool:
     choice = input(f"{name} cross out the number? (y/n) ")
     if choice.lower() in ('y', 'yes'):
         choice = True
@@ -52,15 +51,11 @@ def player_choice(name):
     return choice
 
 
-def game_process(game):
+def game_process(game: Game):
     winner = None
     choice = False
 
     while game.nrg.numbers:
-        # import pdb
-        # pdb.set_trace()
-        print(game.nrg.number)
-        print(game.nrg.numbers)
         for player in game.players.copy():
             if isinstance(player, Human):
                 choice = player_choice(player.name)
@@ -73,11 +68,10 @@ def game_process(game):
 
         if game.winner:
             winner = game.winner
-            print(f"{winner} you win")
             break
     else:
         winner = game.players[0]
-        print(f"{winner} you win")
+    print(f"{winner} you win")
 
 
 if __name__ == '__main__':
@@ -87,8 +81,5 @@ if __name__ == '__main__':
     if not game.players:
         game.add_player(Bot())
         game.add_player(Human())
-
-    game.players[1].card = game.nrg.numbers[74:] + [0] * 12
-    game.players[1].card_game = game.players[1].card.copy()
 
     game_process(game)

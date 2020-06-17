@@ -21,9 +21,7 @@ def game():
 
 
 class Gamer(Player):
-
-    def __init__(self):
-        super().__init__()
+    """Class for testing class Player"""
 
 
 class TestGamePlayers:
@@ -81,9 +79,24 @@ class TestNRG:
 class TestLottoGame:
 
     def test_human_winner(self, game):
-        player = game.players[1]
+        for player in players:
+            if isinstance(player, Human):
+                break
         player.card = game.nrg.numbers[74:] + [game.nrg.number] + [0] * 11
         player.card_game = player.card.copy()
         with mock.patch('builtins.input', return_value="y"):
             game_process(game)
         assert player == game.winner
+
+    def test_first_player_winner(self, game):
+        player = game.players[0]
+        player.card = [0] * 27
+        player.card_game = player.card.copy()
+        with mock.patch('builtins.input', return_value="y"):
+            game_process(game)
+        assert player == game.winner
+
+    def test_one_player_winner(self, game):
+        game.players = [Bot()]
+        game_process(game)
+        assert isinstance(game.winner, Bot)

@@ -21,11 +21,11 @@ class NumbersRandomGenerator(metaclass=Singleton):
         self.number = self.numbers.pop()
 
     @staticmethod
-    def get_card_numbers() -> List:
+    def get_card_numbers() -> List[int]:
         return random.sample(range(1, 90+1), k=15)
 
     @staticmethod
-    def get_number_positions() -> List:
+    def get_number_positions() -> List[int]:
         size = 3 * 9  # 3 - rows, 9 - columns
         count_number = 15  # need only 15 numbers on board
         return random.sample(range(0, size+1), k=count_number)
@@ -42,7 +42,7 @@ class Player(ABC, NRG):
         self.card = self._card_init()
         self.card_game = self.card.copy()
 
-    def _card_init(self) -> List:
+    def _card_init(self) -> List[int]:
         numbers = self.nrg.get_card_numbers()
         positions = self.nrg.get_number_positions()
         card = dict(zip(positions, numbers))
